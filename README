@@ -1,0 +1,8 @@
+PIP Requirements:
+  - PyYAML
+  - docker-py
+  - docker-compose
+  - docker>=2.6,<3.0.0
+
+RUN:
+  - sudo ansible-playbook provision.yml

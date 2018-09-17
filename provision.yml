@@ -1,0 +1,58 @@
+- name: Run using a project directory
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - docker_service:
+        project_src: logging
+        state: absent
+
+    - docker_service:
+        project_src: logging
+      register: output
+
+    - debug:
+        var: output
+
+    - docker_service:
+        project_src: logging
+        build: yes
+      register: output
+
+    - debug:
+        var: output
+
+    - assert:
+        that: "not output.changed "
+
+    - docker_service:
+        project_src: logging
+        build: yes
+        stopped: true
+      register: output
+
+    - debug:
+        var: output
+
+    - assert:
+        that:
+          - "not nginx.logging_nginx_1.state.running"
+          - "not fluentd.logging_fluentd_1.state.running"
+          - "not elasticsearch.logging_elasticsearch_1.state.running "
+          - "not kibana.logging_kibana_1.state.running"
+
+    - docker_service:
+        project_src: logging
+        build: yes
+        restarted: true
+      register: output
+
+    - debug:
+        var: output
+
+    - assert:
+        that:
+          - "not nginx.logging_nginx_1.state.running"
+          - "not fluentd.logging_fluentd_1.state.running"
+          - "not elasticsearch.logging_elasticsearch_1.state.running "
+          - "not kibana.logging_kibana_1.state.running"
